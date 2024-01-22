@@ -418,6 +418,7 @@
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PLOPLO-Engine.fx">
@@ -430,7 +431,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CLInclude Include="resource.h" />
+    <ClInclude Include="include\Prerequisites.h" />
+    <ClInclude Include="include\Resource.h" />
+    <ClInclude Include="include\Window.h" />
     <ResourceCompile Include="PLOPLO-Engine.rc" />
   </ItemGroup>
   <ItemGroup>
