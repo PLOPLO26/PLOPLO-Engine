@@ -29,10 +29,16 @@
     <ClInclude Include="include\Resource.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Device.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
     <ClCompile Include="src\Window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Device.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -40,6 +46,7 @@
     <None Include="PLOPLO-Engine.fx">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PLOPLO-Engine.rc">

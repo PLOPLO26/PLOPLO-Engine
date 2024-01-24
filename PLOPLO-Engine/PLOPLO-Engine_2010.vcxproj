@@ -418,9 +418,11 @@
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
+    <ClCompile Include="src\Device.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="PLOPLO-Engine.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -431,6 +433,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Device.h" />
     <ClInclude Include="include\Prerequisites.h" />
     <ClInclude Include="include\Resource.h" />
     <ClInclude Include="include\Window.h" />

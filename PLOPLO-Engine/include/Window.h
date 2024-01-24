@@ -1,30 +1,34 @@
 #pragma once
 #include "Prerequisites.h"
 
-class
-Window {
+class Window {
 public:
-	Window();
-	~Window();
+    // Constructor de la clase Window.
+    Window();
 
-	HRESULT
-	init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc);
+    // Destructor de la clase Window.
+    ~Window();
 
-	void 
-	update();
+    // Inicializa la ventana con los parámetros dados.
+    // Retorna un código de error HRESULT.
+    HRESULT init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc);
 
-	void
-	render();
+    // Actualiza la ventana (puede implementarse según sea necesario).
+    void update();
 
-	void
-	destroy();
+    // Renderiza el contenido de la ventana (puede implementarse según sea necesario).
+    void render();
+
+    // Destruye la ventana y libera los recursos asociados.
+    void destroy();
+
 public:
-	HWND  m_hWnd = nullptr;
-	unsigned int m_width;
-	unsigned int m_height;
+    HWND  m_hWnd = nullptr;  // Handle de la ventana.
+    unsigned int m_width;    // Ancho de la ventana.
+    unsigned int m_height;   // Alto de la ventana.
 
 private:
-	HINSTANCE m_hInst = nullptr;
-	RECT m_rect;
-	std::string m_windowName = "PLOPLO-Engine"; 
+    HINSTANCE m_hInst = nullptr;  // Instancia de la aplicación.
+    RECT m_rect;                  // Estructura RECT que representa el rectángulo de la ventana.
+    std::string m_windowName = "PLOPLO-Engine";  // Nombre de la ventana.
 };
