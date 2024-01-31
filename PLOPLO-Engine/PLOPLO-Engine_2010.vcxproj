@@ -418,7 +418,9 @@
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
+    <ClCompile Include="src\DepthStencilView.cpp" />
     <ClCompile Include="src\Device.cpp" />
+    <ClCompile Include="src\DeviceContext.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +435,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\DepthStencilView.h" />
     <ClInclude Include="include\Device.h" />
     <ClInclude Include="include\DeviceContext.h" />
     <ClInclude Include="include\Prerequisites.h" />
