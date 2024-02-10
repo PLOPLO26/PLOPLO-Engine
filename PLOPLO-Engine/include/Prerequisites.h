@@ -7,6 +7,7 @@
 # include <chrono>
 
 // External lib
+//// Incluimos las bibliotecas externas necesarias para DirectX
 # include <d3d11.h>
 # include <d3dx11.h>
 # include <d3dcompiler.h>
@@ -21,6 +22,7 @@
 // MACRO for safe release of resources
 #define SAFE_RELEASE(x) if(x != nullptr) x->Release(); x = nullptr;
 
+//Macro para imprimir mensajes de depuración
 // * To check monster
 #define OutputLOG(_ClassName, _FunctionName, _OutputMessage)           \
 OutputDebugStringA(_ClassName);                                        \

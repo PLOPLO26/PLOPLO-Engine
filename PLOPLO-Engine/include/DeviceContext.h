@@ -33,5 +33,5 @@ public:
 		                      ID3D11ShaderResourceView* const* ppShaderResourceViews);
 
 public:
-	ID3D11DeviceContext* m_deviceContext = nullptr;
+	ID3D11DeviceContext* m_deviceContext = nullptr; /// Puntero al contex
 };
