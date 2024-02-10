@@ -19,6 +19,7 @@ public:
     void 
     destroy();
 
+    // Funciones para crear diferentes recursos de DirectX
     HRESULT 
     CreateRenderTargetView(ID3D11Resource* pResource,
                            const D3D11_RENDER_TARGET_VIEW_DESC* pDesc,
@@ -64,5 +65,5 @@ public:
    
 
 public:
-    ID3D11Device* m_device = nullptr;
+    ID3D11Device* m_device = nullptr; // Puntero al dispositivo de DirectX
 };

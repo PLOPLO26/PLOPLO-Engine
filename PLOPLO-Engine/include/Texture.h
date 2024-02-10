@@ -9,9 +9,11 @@ public:
 	Texture() = default;
 	~Texture();
 
+	// Cargar ek archivo de textura 
 	void
 	init(Device device, std::string textureName);
 
+	//La funcion inicia la textura con parámetros como ancho, alto, formato y banderas de enlace
 	void 
 	init(Device device,
 		unsigned int width,
@@ -19,12 +21,15 @@ public:
 		DXGI_FORMAT Format,
 		unsigned int BindFlags);
 
+	//Cambios dinamicos en la textura 
 	void
 		update();
 
+	//Renderiza la textura
 	void
 		render(DeviceContext & deviceContext, unsigned int StartSlot);
 
+	//Destruye la textura, liberando los recursos asociados
 	void
 		destroy();
 

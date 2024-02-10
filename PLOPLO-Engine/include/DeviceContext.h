@@ -26,6 +26,7 @@ public:
 			                  float Depth,
 			                  unsigned int Stencil);
 
+	//Establece los recursos de sombreador de píxeles
 	void 
 	PSSetShaderResources(unsigned int StartSlot,
 		                      unsigned int NumViews,

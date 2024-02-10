@@ -30,6 +30,7 @@ OutputDebugStringA(" : ");                                             \
 OutputDebugStringA(_OutputMessage);                                    \
 OutputDebugStringA("\n");
 
+// Macro para imprimir advertencias en el depurador
 #define WARNING( s )                         \
 {                                            \
    std::wostringstream os_;                  \
