@@ -17,7 +17,7 @@ public:
 	void init(Device& device,
 		      DeviceContext& deviceContext,
 		      Texture& backBuffer,
-		      Window window);
+		      Window window); //Inicializa el Objeto
 
 	void
 	update();
@@ -29,8 +29,8 @@ public:
 	present();
 
 public:
-	IDXGISwapChain* m_swapChain = nullptr;
+	IDXGISwapChain* m_swapChain = nullptr; // Puntero al objeto
 private:
-	D3D_DRIVER_TYPE m_driverType = D3D_DRIVER_TYPE_NULL;
-	D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0;
+	D3D_DRIVER_TYPE m_driverType = D3D_DRIVER_TYPE_NULL; // Tipo de controlador de DirectX
+	D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0; //Nivel de características de DirectX
 };
