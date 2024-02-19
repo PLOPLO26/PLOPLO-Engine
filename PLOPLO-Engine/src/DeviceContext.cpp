@@ -29,8 +29,8 @@ void DeviceContext::ClearDepthStencilView(ID3D11DepthStencilView* pDepthStencilV
 
 //Verifica si ppShaderResourceViewses nulo. Si lo es, muestra un mensaje de advertencia 
 // indicando el error y termina el programa. Si no es nulo, utiliza el contexto 
-// de dispositivo m_deviceContext para llamar a la función PSSetShaderResources de DirectX 
-// 11 para establecer los recursos de sombreador de píxeles.
+// de dispositivo m_deviceContext para llamar a la funcion PSSetShaderResources de DirectX 
+// 11 para establecer los recursos de sombreador de pixeles.
 
 void 
 DeviceContext::PSSetShaderResources(unsigned int StartSlot, 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Prerequisites.h"
-
+// se encarga de crear los 
 class Device
 {
 public:

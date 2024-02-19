@@ -111,6 +111,7 @@ void Texture::render(DeviceContext& deviceContext, unsigned int StartSlot)
 	}
 }
 
+//Destruye la textura liberando la memoria asociada.
 void Texture::destroy()
 {
 	if (m_texture != nullptr)

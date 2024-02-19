@@ -23,6 +23,9 @@ public:
 	update();
 
 	void
+	render();
+
+	void
 	destroy();
 
 	void 
@@ -30,7 +33,8 @@ public:
 
 public:
 	IDXGISwapChain* m_swapChain = nullptr; // Puntero al objeto
-private:
 	D3D_DRIVER_TYPE m_driverType = D3D_DRIVER_TYPE_NULL; // Tipo de controlador de DirectX
+private:
+	
 	D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0; //Nivel de características de DirectX
 };
