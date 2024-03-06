@@ -4,6 +4,7 @@
 
 Texture::~Texture()
 {
+	/*
 	if (m_texture != nullptr)
 	{
 		SAFE_RELEASE(m_texture);
@@ -12,6 +13,7 @@ Texture::~Texture()
 	{
 		SAFE_RELEASE(m_textureFromImg);
 	}
+	*/
 }
 
 //Texture::init(Device device, std::string textureName)

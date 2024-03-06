@@ -41,3 +41,10 @@ void DepthStencilView::render(DeviceContext& deviceContext)
 {
 	deviceContext.ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
+
+// Método para liberar la memoria asignada para la vista de profundidad y stencil
+void DepthStencilView::destroy()
+{
+	// Liberar la memoria de la vista de profundidad y stencil
+	SAFE_RELEASE(m_depthStencilView);
+}

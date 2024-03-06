@@ -44,6 +44,13 @@
     <ClInclude Include="include\Texture.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="include\RenderTargetView.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Viewport.h" />
+    <ClInclude Include="include\InputLayout.h" />
+    <ClInclude Include="include\ShaderProgram.h" />
+    <ClInclude Include="include\Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
@@ -63,6 +70,11 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\SwapChain.cpp" />
+    <ClCompile Include="src\RenderTargetView.cpp" />
+    <ClCompile Include="src\Viewport.cpp" />
+    <ClCompile Include="src\InputLayout.cpp" />
+    <ClCompile Include="src\ShaderProgram.cpp" />
+    <ClCompile Include="src\Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PLOPLO-Engine.fx">

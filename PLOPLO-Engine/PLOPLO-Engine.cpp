@@ -14,16 +14,21 @@
 #include "DepthStencilView.h"
 #include "Texture.h"
 #include "SwapChain.h"
+#include "RenderTargetView.h"
+#include "Viewport.h"
+#include "ShaderProgram.h"
+#include "Buffer.h"
 
 
 //--------------------------------------------------------------------------------------
 // Structures
 //--------------------------------------------------------------------------------------
+/*
 struct SimpleVertex
 {
     XMFLOAT3 Pos;
     XMFLOAT2 Tex;
-};
+};*/
 
 struct CBNeverChanges
 {
@@ -52,6 +57,9 @@ DepthStencilView                    g_depthStencilView;
 Texture                             g_depthStencil;
 SwapChain                           g_swapchain;
 Texture                             g_backBuffer;
+RenderTargetView                    g_renderTargetView;
+Viewport                            g_viewport;
+ShaderProgram                       g_shaderProgram;
 
 //D3D_DRIVER_TYPE                     g_driverType = D3D_DRIVER_TYPE_NULL;
 //D3D_FEATURE_LEVEL                   g_featureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -61,11 +69,13 @@ Texture                             g_backBuffer;
 ID3D11RenderTargetView*             g_pRenderTargetView = nullptr;
 //D3D11Texture2D*                    g_pDepthStencil = nullptr;
 //ID3D11DepthStencilView*             g_pDepthStencilView = nullptr;
-ID3D11VertexShader*                 g_pVertexShader = nullptr;
-ID3D11PixelShader*                  g_pPixelShader = nullptr;
-ID3D11InputLayout*                  g_pVertexLayout = nullptr;
-ID3D11Buffer*                       g_pVertexBuffer = nullptr;
-ID3D11Buffer*                       g_pIndexBuffer = nullptr;
+//ID3D11VertexShader*                 g_pVertexShader = nullptr;
+//ID3D11PixelShader*                  g_pPixelShader = nullptr;
+//ID3D11InputLayout*                  g_pVertexLayout = nullptr;
+Buffer                              g_vertexBuffer;
+Buffer                              g_indexBufffer;
+//ID3D11Buffer*                       g_pVertexBuffer = nullptr;
+//ID3D11Buffer*                       g_pIndexBuffer = nullptr;
 ID3D11Buffer*                       g_pCBNeverChanges = nullptr;
 ID3D11Buffer*                       g_pCBChangeOnResize = nullptr;
 ID3D11Buffer*                       g_pCBChangesEveryFrame = nullptr;
@@ -221,11 +231,7 @@ HRESULT InitDevice()
         */
 
     g_swapchain.init(g_device, g_deviceContext, g_backBuffer, g_window);
-    // Create a render target view
-    //ID3D11Texture2D* pBackBuffer = nullptr;
-    //hr = g_pSwapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&pBackBuffer );
-    //if( FAILED( hr ) )
-      //  return hr;
+    
 
     hr = g_device.CreateRenderTargetView( g_backBuffer.m_texture, nullptr, &g_pRenderTargetView );
     g_backBuffer.m_texture->Release();
@@ -233,7 +239,9 @@ HRESULT InitDevice()
         return hr;
 
     // Create depth stencil texture
-
+    g_renderTargetView.init(g_device, 
+                            g_backBuffer, 
+                            DXGI_FORMAT_R8G8B8A8_UNORM);
 
     /*D3D11_TEXTURE2D_DESC descDepth;
     ZeroMemory( &descDepth, sizeof(descDepth) );
@@ -252,11 +260,12 @@ HRESULT InitDevice()
     if( FAILED( hr ) )
         return hr;*/
 
+    //Create depth Stencil Texture
     g_depthStencil.init(g_device,
-        g_window.m_width,
-        g_window.m_height,
-        DXGI_FORMAT_D24_UNORM_S8_UINT,
-        D3D11_BIND_DEPTH_STENCIL);
+                        g_window.m_width,
+                        g_window.m_height,
+                        DXGI_FORMAT_D24_UNORM_S8_UINT,
+                        D3D11_BIND_DEPTH_STENCIL);
 
     // Create the depth stencil view
     //D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -269,11 +278,18 @@ HRESULT InitDevice()
     //hr = g_device.m_device->CreateDepthStencilView( g_pDepthStencil, &descDSV, &g_depthStencilView );
   //  if( FAILED( hr ) )
 //        return hr;
-    g_depthStencilView.init(g_device, g_depthStencil.m_texture, DXGI_FORMAT_D24_UNORM_S8_UINT);
+    g_depthStencilView.init(g_device, 
+                            g_depthStencil.m_texture, 
+                            DXGI_FORMAT_D24_UNORM_S8_UINT);
 
-    g_deviceContext.m_deviceContext->OMSetRenderTargets( 1, &g_pRenderTargetView, g_depthStencilView.m_depthStencilView );
+    
+    //g_deviceContext.m_deviceContext->OMSetRenderTargets( 1, &g_pRenderTargetView, g_depthStencilView.m_depthStencilView );
+
+    g_viewport.init(g_window);
 
     // Setup the viewport
+
+    /*
     D3D11_VIEWPORT vp;
     vp.Width = (FLOAT)g_window.m_width;
     vp.Height = (FLOAT)g_window.m_height;
@@ -283,23 +299,11 @@ HRESULT InitDevice()
     vp.TopLeftY = 0;
     g_deviceContext.m_deviceContext->RSSetViewports( 1, &vp );
 
-    // Compile the vertex shader
-    ID3DBlob* pVSBlob = nullptr;
-    hr = CompileShaderFromFile( "PLOPLO-Engine.fx", "VS", "vs_4_0", &pVSBlob );
-    if( FAILED( hr ) )
-    {
-        MessageBox( nullptr,
-                    "The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK );
-        return hr;
-    }
+    */
 
-    // Create the vertex shader
-    hr = g_device.CreateVertexShader( pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &g_pVertexShader );
-    if( FAILED( hr ) )
-    {    
-        pVSBlob->Release();
-        return hr;
-    }
+    // Compile the vertex shader
+    
+
 
     // Define the input layout
     D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -309,87 +313,101 @@ HRESULT InitDevice()
     };
     UINT numElements = ARRAYSIZE( layout );
 
-    // Create the input layout
-    hr = g_device.CreateInputLayout( layout, numElements, pVSBlob->GetBufferPointer(),
-                                          pVSBlob->GetBufferSize(), &g_pVertexLayout );
-    pVSBlob->Release();
-    if( FAILED( hr ) )
-        return hr;
+    //UINT numElements = ARRAYSIZE( layout );
 
-    // Set the input layout
-    g_deviceContext.m_deviceContext->IASetInputLayout( g_pVertexLayout );
+    std::vector<D3D11_INPUT_ELEMENT_DESC> Layout;
+    D3D11_INPUT_ELEMENT_DESC position;
+    position.SemanticName = "POSITION";
+    position.SemanticIndex = 0;
+    position.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    position.InputSlot = 0;
+    position.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT /*12*/;
+    position.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    position.InstanceDataStepRate = 0;
+    Layout.push_back(position);
 
-    // Compile the pixel shader
-    ID3DBlob* pPSBlob = nullptr;
-    hr = CompileShaderFromFile( "PLOPLO-Engine.fx", "PS", "ps_4_0", &pPSBlob );
-    if( FAILED( hr ) )
-    {
-        MessageBox( nullptr,
-                    "The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK );
-        return hr;
-    }
+    D3D11_INPUT_ELEMENT_DESC texcoord;
+    texcoord.SemanticName = "TEXCOORD";
+    texcoord.SemanticIndex = 0;
+    texcoord.Format = DXGI_FORMAT_R32G32_FLOAT;
+    texcoord.InputSlot = 0;
+    texcoord.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT /*12*/;
+    texcoord.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    texcoord.InstanceDataStepRate = 0;
+    Layout.push_back(texcoord);
 
-    // Create the pixel shader
-    hr = g_device.CreatePixelShader( pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &g_pPixelShader );
-    pPSBlob->Release();
-    if( FAILED( hr ) )
-        return hr;
-
+    //Init Shader
+    g_shaderProgram.init(g_device, "CutManEngine.fx", Layout);
+    
+    
+    //Generar Mesh
+    // ->Carga de modelo 3D
     // Create vertex buffer
     SimpleVertex vertices[] =
     {
-        { XMFLOAT3( -1.0f, 1.0f, -1.0f ), XMFLOAT2( 0.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, -1.0f ), XMFLOAT2( 1.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, 1.0f ), XMFLOAT2( 1.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, 1.0f, 1.0f ), XMFLOAT2( 0.0f, 1.0f ) },
+         { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
 
-        { XMFLOAT3( -1.0f, -1.0f, -1.0f ), XMFLOAT2( 0.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, -1.0f ), XMFLOAT2( 1.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, 1.0f ), XMFLOAT2( 1.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, -1.0f, 1.0f ), XMFLOAT2( 0.0f, 1.0f ) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
 
-        { XMFLOAT3( -1.0f, -1.0f, 1.0f ), XMFLOAT2( 0.0f, 0.0f ) },
-        { XMFLOAT3( -1.0f, -1.0f, -1.0f ), XMFLOAT2( 1.0f, 0.0f ) },
-        { XMFLOAT3( -1.0f, 1.0f, -1.0f ), XMFLOAT2( 1.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, 1.0f, 1.0f ), XMFLOAT2( 0.0f, 1.0f ) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
 
-        { XMFLOAT3( 1.0f, -1.0f, 1.0f ), XMFLOAT2( 0.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, -1.0f ), XMFLOAT2( 1.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, -1.0f ), XMFLOAT2( 1.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, 1.0f ), XMFLOAT2( 0.0f, 1.0f ) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
 
-        { XMFLOAT3( -1.0f, -1.0f, -1.0f ), XMFLOAT2( 0.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, -1.0f ), XMFLOAT2( 1.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, -1.0f ), XMFLOAT2( 1.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, 1.0f, -1.0f ), XMFLOAT2( 0.0f, 1.0f ) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f) },
 
-        { XMFLOAT3( -1.0f, -1.0f, 1.0f ), XMFLOAT2( 0.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, 1.0f ), XMFLOAT2( 1.0f, 0.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, 1.0f ), XMFLOAT2( 1.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, 1.0f, 1.0f ), XMFLOAT2( 0.0f, 1.0f ) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
     };
 
-    D3D11_BUFFER_DESC bd;
-    ZeroMemory( &bd, sizeof(bd) );
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( SimpleVertex ) * 24;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = 0;
-    D3D11_SUBRESOURCE_DATA InitData;
-    ZeroMemory( &InitData, sizeof(InitData) );
-    InitData.pSysMem = vertices;
-    hr = g_device.CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
-    if( FAILED( hr ) )
-        return hr;
+    Mesh mesh;
+
+    for (SimpleVertex vertex : vertices)
+    {
+        mesh.vertex.push_back(vertex);
+    }
+    mesh.numVertex = mesh.vertex.size();
+
+    //D3D11_BUFFER_DESC bd;
+    //ZeroMemory( &bd, sizeof(bd) );
+    //bd.Usage = D3D11_USAGE_DEFAULT;
+    //bd.ByteWidth = sizeof( SimpleVertex ) * 24;
+    //bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    //bd.CPUAccessFlags = 0;
+
+    //D3D11_SUBRESOURCE_DATA InitData;
+    //ZeroMemory( &InitData, sizeof(InitData) );
+    //InitData.pSysMem = vertices;
+    //hr = g_device.CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
+    //if( FAILED( hr ) )
+       // return hr;
+
+    g_vertexBuffer.init(g_device, mesh, D3D11_BIND_VERTEX_BUFFER);
 
     // Set vertex buffer
-    UINT stride = sizeof( SimpleVertex );
-    UINT offset = 0;
-    g_deviceContext.m_deviceContext->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
+    //UINT stride = sizeof( SimpleVertex );
+    //UINT offset = 0;
+    //g_deviceContext.m_deviceContext->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
 
     // Create index buffer
     // Create vertex buffer
-    WORD indices[] =
+    unsigned int indices[] =
     {
         3,1,0,
         2,1,3,
@@ -410,22 +428,32 @@ HRESULT InitDevice()
         23,20,22
     };
 
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( WORD ) * 36;
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    bd.CPUAccessFlags = 0;
-    InitData.pSysMem = indices;
-    hr = g_device.CreateBuffer( &bd, &InitData, &g_pIndexBuffer );
-    if( FAILED( hr ) )
-        return hr;
+    for (unsigned int index : indices)
+    {
+        mesh.index.push_back(index);
+    }
+    mesh.numVertex = mesh.index.size();
+
+    g_indexBufffer.init(g_device, mesh, D3D11_BIND_INDEX_BUFFER);
+
+    //bd.Usage = D3D11_USAGE_DEFAULT;
+    //bd.ByteWidth = sizeof( unsigned int ) * 36;
+    //bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    //bd.CPUAccessFlags = 0;
+    //InitData.pSysMem = indices;
+    //hr = g_device.CreateBuffer( &bd, &InitData, &g_pIndexBuffer );
+    //if( FAILED( hr ) )
+        //return hr;
 
     // Set index buffer
-    g_deviceContext.m_deviceContext->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0 );
+    //g_deviceContext.m_deviceContext->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0 );
 
     // Set primitive topology
     g_deviceContext.m_deviceContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
     // Create the constant buffers
+    D3D11_BUFFER_DESC bd;
+    ZeroMemory(&bd, sizeof(bd));
     bd.Usage = D3D11_USAGE_DEFAULT;
     bd.ByteWidth = sizeof(CBNeverChanges);
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -492,24 +520,37 @@ HRESULT InitDevice()
 //--------------------------------------------------------------------------------------
 void CleanupDevice()
 {
-    if( g_deviceContext.m_deviceContext ) g_deviceContext.m_deviceContext->ClearState();
-
+    //Release device context
+    g_deviceContext.destroy();
+    //Release Sample Linear
     if( g_pSamplerLinear ) g_pSamplerLinear->Release();
+    //Release ModelTextures
     if( g_pTextureRV ) g_pTextureRV->Release();
+    //Releas Camera resources
     if( g_pCBNeverChanges ) g_pCBNeverChanges->Release();
     if( g_pCBChangeOnResize ) g_pCBChangeOnResize->Release();
+    //Release Model resources
     if( g_pCBChangesEveryFrame ) g_pCBChangesEveryFrame->Release();
-    if( g_pVertexBuffer ) g_pVertexBuffer->Release();
-    if( g_pIndexBuffer ) g_pIndexBuffer->Release();
-    if( g_pVertexLayout ) g_pVertexLayout->Release();
-    if( g_pVertexShader ) g_pVertexShader->Release();
-    if( g_pPixelShader ) g_pPixelShader->Release();
-    //if( g_pDepthStencil ) g_pDepthStencil->Release();
-    //if( g_pDepthStencilView ) g_pDepthStencilView->Release();
+    // Release Shader Resources
+    //if( g_pVertexBuffer ) g_pVertexBuffer->Release();
+    //if( g_pIndexBuffer ) g_pIndexBuffer->Release();
+    g_vertexBuffer.destroy();
+    g_vertexBuffer.destroy();
+    //if( g_pVertexLayout ) g_pVertexLayout->Release();
+    //if( g_pVertexShader ) g_pVertexShader->Release();
+    //if( g_pPixelShader ) g_pPixelShader->Release();
+    //Release depth stencil
+    g_shaderProgram.destroy();
+    g_depthStencil.destroy();
+   
+    //Release depth stencil view
+    g_depthStencilView.destroy();
+    //Release render target view
     if( g_pRenderTargetView ) g_pRenderTargetView->Release();
-    //if( g_pSwapChain ) g_pSwapChain->Release();
-    //if( g_deviceContext.m_deviceContext ) g_deviceContext.m_deviceContext->Release();
-    //if( g_pd3dDevice ) g_pd3dDevice->Release();
+    //Release swapchain
+    g_swapchain.destroy();
+    //Release UI
+    //Release device 
     g_device.destroy();
 }
 
@@ -573,13 +614,17 @@ void Render()
     // Clear the back buffer
     //
     float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red, green, blue, alpha
-    g_deviceContext.m_deviceContext->ClearRenderTargetView( g_pRenderTargetView, ClearColor );
+   
 
-    //
-    // Clear the depth buffer to 1.0 (max depth)
-    //
-    //g_deviceContext.m_deviceContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
+    
+    
+    
     g_depthStencilView.render(g_deviceContext);
+    g_renderTargetView.render(g_deviceContext, g_depthStencilView, 1, ClearColor);
+
+    //set Viewport
+    g_viewport.render(g_deviceContext);
+
     //
     // Update variables that change once per frame
     //
@@ -591,11 +636,12 @@ void Render()
     //
     // Render the cube
     //
-    g_deviceContext.m_deviceContext->VSSetShader( g_pVertexShader, nullptr, 0 );
+    g_shaderProgram.render(g_deviceContext);
+    //g_deviceContext.m_deviceContext->VSSetShader( g_pVertexShader, nullptr, 0 );
     g_deviceContext.m_deviceContext->VSSetConstantBuffers( 0, 1, &g_pCBNeverChanges );
     g_deviceContext.m_deviceContext->VSSetConstantBuffers( 1, 1, &g_pCBChangeOnResize );
     g_deviceContext.m_deviceContext->VSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
-    g_deviceContext.m_deviceContext->PSSetShader( g_pPixelShader, nullptr, 0 );
+    //g_deviceContext.m_deviceContext->PSSetShader( g_pPixelShader, nullptr, 0 );
     g_deviceContext.m_deviceContext->PSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
     g_deviceContext.m_deviceContext->PSSetShaderResources( 0, 1, &g_pTextureRV );
     g_deviceContext.m_deviceContext->PSSetSamplers( 0, 1, &g_pSamplerLinear );
