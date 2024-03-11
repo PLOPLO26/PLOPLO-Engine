@@ -84,6 +84,7 @@ Mesh                                g_mesh;
 HRESULT InitDevice();
 void CleanupDevice();
 LRESULT CALLBACK    WndProc( HWND, UINT, WPARAM, LPARAM );
+void update();
 void Render();
 
 
@@ -117,6 +118,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
         else
         {
             Render();
+            update();
         }
     }
 
@@ -440,31 +442,38 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //--------------------------------------------------------------------------------------
 // Render a frame
 //--------------------------------------------------------------------------------------
-void Render()
+
+void update()
 {
     // Update our time
     static float t = 0.0f;
-    if( g_swapchain.m_driverType == D3D_DRIVER_TYPE_REFERENCE )
+    if (g_swapchain.m_driverType == D3D_DRIVER_TYPE_REFERENCE)
     {
-        t += ( float )XM_PI * 0.0125f;
+        t += (float)XM_PI * 0.0125f;
     }
     else
     {
         static DWORD dwTimeStart = 0;
         DWORD dwTimeCur = GetTickCount();
-        if( dwTimeStart == 0 )
+        if (dwTimeStart == 0)
             dwTimeStart = dwTimeCur;
-        t = ( dwTimeCur - dwTimeStart ) / 1000.0f;
+        t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
 
     // Rotate cube around the origin
-    g_World = XMMatrixRotationY( t );
+    g_World = XMMatrixRotationY(t);
 
     // Modify the color
     g_vMeshColor.x = 1.0f;//( sinf( t * 1.0f ) + 1.0f ) * 0.5f;
     g_vMeshColor.y = 1.0f;//( cosf( t * 3.0f ) + 1.0f ) * 0.5f;
     g_vMeshColor.z = 1.0f;//( sinf( t * 5.0f ) + 1.0f ) * 0.5f;
 
+}
+
+
+void Render()
+{
+    
     //
     // Clear the back buffer
     //
@@ -492,11 +501,9 @@ void Render()
     // Render the cube
     //
     g_shaderProgram.render(g_deviceContext);
-    //g_deviceContext.m_deviceContext->VSSetShader( g_pVertexShader, nullptr, 0 );
     g_deviceContext.m_deviceContext->VSSetConstantBuffers( 0, 1, &g_pCBNeverChanges );
     g_deviceContext.m_deviceContext->VSSetConstantBuffers( 1, 1, &g_pCBChangeOnResize );
     g_deviceContext.m_deviceContext->VSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
-    //g_deviceContext.m_deviceContext->PSSetShader( g_pPixelShader, nullptr, 0 );
     g_deviceContext.m_deviceContext->PSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
    
     
