@@ -127,3 +127,31 @@ void DeviceContext::UpdateSubresource(ID3D11Resource* pDstResource,
 		                               SrcRowPitch,
 		                               SrcDepthPitch);
 }
+
+void DeviceContext::IASetVertexBuffer(unsigned int Starlot, 
+	                                  unsigned int NumBuffers, 
+	                                  ID3D11Buffer* const* ppVertexBuffers, 
+									  const unsigned int* pStrides, 
+									  const unsigned int* pOffsets)
+{
+	m_deviceContext->IASetVertexBuffers(Starlot, 
+		                                NumBuffers, 
+		                                ppVertexBuffers, 
+		                                pStrides, 
+		                                pOffsets);
+}
+
+void DeviceContext::IASetIndexBuffer(ID3D11Buffer* pIndexBuffer, 
+									 DXGI_FORMAT format, 
+									 unsigned int Offset)
+{
+	m_deviceContext->IASetIndexBuffer(pIndexBuffer, format, Offset);
+}
+
+void DeviceContext::PSSetSamplers(unsigned int StartSlot, 
+	                              unsigned int NumSamplers, 
+	                              ID3D11SamplerState* const* ppSamplers)
+{
+	m_deviceContext->PSSetSamplers(StartSlot, NumSamplers, ppSamplers);
+}
+

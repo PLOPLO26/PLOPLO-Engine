@@ -59,6 +59,22 @@ public:
 		unsigned int SrcRowPitch,
 		unsigned int SrcDepthPitch);
 
+	void
+		IASetVertexBuffer(unsigned int Starlot,
+			unsigned int NumBuffers,
+			ID3D11Buffer* const* ppVertexBuffers,
+			const unsigned int* pStrides,
+			const unsigned int* pOffsets);
+	void
+		IASetIndexBuffer(ID3D11Buffer* pIndexBuffer,
+			DXGI_FORMAT format,
+			unsigned int Offset);
+	
+	void
+		PSSetSamplers(unsigned int StartSlot,
+			          unsigned int NumSamplers,
+			          ID3D11SamplerState* const* ppSamplers);
+
 public:
 
 	// Puntero al contexto del dispositivo

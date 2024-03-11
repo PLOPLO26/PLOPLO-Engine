@@ -34,7 +34,7 @@ public:
 	//Actualiza en render el constsnt Buffer
 
 	void
-		render(DeviceContext& deviceContext);
+		render(DeviceContext& deviceContext, DXGI_FORMAT format);
 
 
 	void

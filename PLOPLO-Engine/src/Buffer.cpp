@@ -28,7 +28,7 @@ void Buffer::init(Device device, Mesh mesh, unsigned int bindFlag)
 	{
 		if (mesh.vertex.size() == 0 || mesh.numVertex == 0)
 		{
-			WARNING("ERROR: Buffer::init : Error in data from params [CHECK FOR Mesh mesh]\n");
+			WARNING("ERROR: Buffer::init : Error in data from params [CHECK FOR Mesh mesh VERTEX]\n");
 			exit(1);
 		}
 		//Init descriptor
@@ -38,11 +38,11 @@ void Buffer::init(Device device, Mesh mesh, unsigned int bindFlag)
 		//Init Subresource
 		InitData.pSysMem = mesh.vertex.data();
 	}
-	if (bindFlag == D3D11_BIND_VERTEX_BUFFER)
+	if (bindFlag == D3D11_BIND_INDEX_BUFFER)
 	{
 		if (mesh.index.size() == 0 || mesh.numIndex == 0)
 		{
-			WARNING("ERROR: Buffer::init : Error in data from params [CHECK FOR Mesh mesh]\n");
+			WARNING("ERROR: Buffer::init : Error in data from params [CHECK FOR Mesh mesh INDEX]\n");
 			exit(1);
 		}
 		//Init descriptor
@@ -66,7 +66,7 @@ void Buffer::init(Device device, Mesh mesh, unsigned int bindFlag)
 
 void Buffer::init(Device device, unsigned int ByteWidth)
 {
-	if (device.m_device.size == nullptr)
+	if (device.m_device == nullptr)
 	{
 		WARNING("ERROR: Buffer::init : Error in data from params [CHECK FOR Device device]\n");
 		exit(1);
@@ -119,7 +119,7 @@ void Buffer::render(DeviceContext& deviceContext,
 {
 	if (m_bindFlag == D3D11_BIND_VERTEX_BUFFER)
 	{
-		//deviceContext.IASetVertexBuffers(StarSlot, NumBuffers, &m_vertexBuffer, &m_stride, &m_offset);
+		deviceContext.IASetVertexBuffer(StarSlot, NumBuffers,&m_buffer ,&m_stride , &m_offset);
 	}
 	else
 	{
@@ -128,11 +128,11 @@ void Buffer::render(DeviceContext& deviceContext,
 	}
 }
 
-void Buffer::render(DeviceContext& deviceContext)
+void Buffer::render(DeviceContext& deviceContext, DXGI_FORMAT format)
 {
 	if (m_bindFlag == D3D11_BIND_INDEX_BUFFER)
 	{
-		//deviceContext.IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		deviceContext.IASetIndexBuffer(m_buffer, format, m_offset);
 	}
 	else
 	{
