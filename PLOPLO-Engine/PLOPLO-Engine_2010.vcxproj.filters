@@ -52,6 +52,12 @@
     <ClInclude Include="include\ShaderProgram.h" />
     <ClInclude Include="include\Buffer.h" />
     <ClInclude Include="include\SamplerState.h" />
+    <ClInclude Include="include\ModelLoader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OBJ_Loader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
@@ -77,6 +83,9 @@
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\SamplerState.cpp" />
+    <ClCompile Include="src\ModelLoader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PLOPLO-Engine.fx">
