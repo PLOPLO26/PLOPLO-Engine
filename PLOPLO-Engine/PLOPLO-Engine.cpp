@@ -68,7 +68,8 @@ Buffer                              g_indexBuffer;
 ID3D11Buffer*                       g_pCBNeverChanges = nullptr;
 ID3D11Buffer*                       g_pCBChangeOnResize = nullptr;
 ID3D11Buffer*                       g_pCBChangesEveryFrame = nullptr;
-ID3D11ShaderResourceView*           g_pTextureRV = nullptr;
+Texture                             g_modelTexture;
+//ID3D11ShaderResourceView*           g_pTextureRV = nullptr;
 SamplerState                        g_sampler;
 ModelLoader                         g_loader;
 
@@ -342,9 +343,11 @@ HRESULT InitDevice()
         return hr;
 
     // Load the Texture
-    hr = D3DX11CreateShaderResourceViewFromFile(g_device.m_device, "seafloor.dds", nullptr, nullptr, &g_pTextureRV, nullptr );
-    if( FAILED( hr ) )
-        return hr;
+    //hr = D3DX11CreateShaderResourceViewFromFile(g_device.m_device, "rojo.dds", nullptr, nullptr, &g_pTextureRV, nullptr );
+    //if( FAILED( hr ) )
+      //  return hr;
+
+    g_modelTexture.init(g_device, "rojo.dds");
 
     // Create the sample state
     g_sampler.init(g_device);
@@ -383,7 +386,8 @@ void CleanupDevice()
     //Release Sample Linear
     g_sampler.destroy();
     //Release ModelTextures
-    if( g_pTextureRV ) g_pTextureRV->Release();
+    g_modelTexture.destroy();
+    //if( g_pTextureRV ) g_pTextureRV->Release();
     //Releas Camera resources
     if( g_pCBNeverChanges ) g_pCBNeverChanges->Release();
     if( g_pCBChangeOnResize ) g_pCBChangeOnResize->Release();
@@ -513,7 +517,8 @@ void Render()
     g_vertexBuffer.render(g_deviceContext, 0, 1);
     g_indexBuffer.render(g_deviceContext, DXGI_FORMAT_R32_UINT);
 
-    g_deviceContext.m_deviceContext->PSSetShaderResources(0, 1, &g_pTextureRV);
+    //g_deviceContext.m_deviceContext->PSSetShaderResources(0, 1, &g_pTextureRV);
+    g_modelTexture.render(g_deviceContext, 0);
 
     g_deviceContext.m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
