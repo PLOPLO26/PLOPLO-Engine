@@ -58,6 +58,9 @@
     <ClInclude Include="include\OBJ_Loader.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Material.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
@@ -86,6 +89,9 @@
     <ClCompile Include="src\ModelLoader.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="PLOPLO-Engine.fx">
@@ -97,7 +103,5 @@
     <ResourceCompile Include="PLOPLO-Engine.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
   </ItemGroup>
 </Project>

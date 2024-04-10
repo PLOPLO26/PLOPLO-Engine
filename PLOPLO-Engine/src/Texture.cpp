@@ -103,13 +103,13 @@ void Texture::init(Device device,
 }
 
 //Renderiza la textura su fue inicializada desde un archivo imagen.
-void Texture::render(DeviceContext& deviceContext, unsigned int StartSlot)
+void Texture::render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumViews)
 {
 	if (m_textureFromImg != nullptr)
 	{
 		ID3D11ShaderResourceView* nullSRV[] = { nullptr };
-		deviceContext.PSSetShaderResources(StartSlot, 1, nullSRV);
-		deviceContext.PSSetShaderResources(StartSlot, 1, &m_textureFromImg);
+		deviceContext.PSSetShaderResources(StartSlot, NumViews, nullSRV);
+		deviceContext.PSSetShaderResources(StartSlot, NumViews, &m_textureFromImg);
 	}
 }
 

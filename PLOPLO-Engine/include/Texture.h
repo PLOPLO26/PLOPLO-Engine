@@ -59,7 +59,7 @@ public:
 	// <param name = StartSlot> Esta encargado de asignar el punto de inicio en memoria. 
 	//Renderiza la textura
 	void
-		render(DeviceContext & deviceContext, unsigned int StartSlot);
+		render(DeviceContext & deviceContext, unsigned int StartSlot, unsigned int NumViews);
 
 	
 	//This method is in change of releasing the resources stored in the class's memory
