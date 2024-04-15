@@ -20,6 +20,9 @@
 #include "Buffer.h"
 #include "SamplerState.h"
 #include "ModelLoader.h"
+#include "UserInterface.h"
+
+
 
 
 
@@ -57,6 +60,7 @@ Buffer                              g_lightBuffer;
 Texture                             g_albedo;
 Texture                             g_normal;
 SamplerState                        g_sampler;
+UserInterface                       UI;
 
 XMMATRIX                            g_World;
 XMMATRIX                            g_View;
@@ -108,8 +112,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
         }
         else
         {
-            Render();
             update();
+            Render();
         }
     }
 
@@ -128,33 +132,6 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 //--------------------------------------------------------------------------------------
 // Helper for compiling shaders with D3DX11
 //--------------------------------------------------------------------------------------
-HRESULT CompileShaderFromFile( char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut )
-{
-    HRESULT hr = S_OK;
-
-    DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined( DEBUG ) || defined( _DEBUG )
-    // Set the D3DCOMPILE_DEBUG flag to embed debug information in the shaders.
-    // Setting this flag improves the shader debugging experience, but still allows 
-    // the shaders to be optimized and to run exactly the way they will run in 
-    // the release configuration of this program.
-    dwShaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-    ID3DBlob* pErrorBlob;
-    hr = D3DX11CompileFromFile( szFileName, nullptr, nullptr, szEntryPoint, szShaderModel, 
-        dwShaderFlags, 0, nullptr, ppBlobOut, &pErrorBlob, nullptr );
-    if( FAILED(hr) )
-    {
-        if( pErrorBlob != nullptr )
-            OutputDebugStringA( (char*)pErrorBlob->GetBufferPointer() );
-        if( pErrorBlob ) pErrorBlob->Release();
-        return hr;
-    }
-    if( pErrorBlob ) pErrorBlob->Release();
-
-    return S_OK;
-}
 
 
 //--------------------------------------------------------------------------------------
@@ -269,6 +246,8 @@ HRESULT InitDevice()
     g_lightConfig.LightColor = XMFLOAT3(1.0f, 1.0f, 1.0f); // Color de la luz en RGB
     g_lightConfig.AmbientIntensity = 0.2f; // Intensidad ambiental de la luz
 
+    UI.init(g_window.m_hWnd, g_device.m_device, g_deviceContext.m_deviceContext);
+
     return S_OK;
 }
 
@@ -312,9 +291,14 @@ void CleanupDevice()
 
 //--------------------------------------------------------------------------------------
 // Called every time the application receives a message
+
 //--------------------------------------------------------------------------------------
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+        return true;
     PAINTSTRUCT ps;
     HDC hdc;
 
@@ -343,6 +327,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
 void update()
 {
+    //Ui update
+    
+    UI.update();
+    bool showDemoWindow = true;
+    ImGui::ShowDemoWindow(&showDemoWindow);
+
     // Update our time
     static float t = 0.0f;
     if (g_swapchain.m_driverType == D3D_DRIVER_TYPE_REFERENCE)
@@ -414,6 +404,10 @@ void Render()
     // Set primitive topology and draw the indexed mesh
     g_deviceContext.m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     g_deviceContext.m_deviceContext->DrawIndexed(g_mesh.numIndex, 0, 0);
+
+    //Ui
+    UI.render();
+
 
     // Present our back buffer to our front buffer
     g_swapchain.present();

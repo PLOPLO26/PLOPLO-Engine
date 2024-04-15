@@ -45,7 +45,7 @@ HRESULT Device::CreateRenderTargetView(ID3D11Resource* pResource,
 //Toma como Parametros una descripcion de la textura D3D11_TEXTURE2D_DESC, 
 // datos iniciales, un puntero al objeto ID3D11Texture2D donde se almacenara 
 //la textura creada
-HRESULT __stdcall Device::CreateTexture2D(const D3D11_TEXTURE2D_DESC* pDesc,
+HRESULT Device::CreateTexture2D(const D3D11_TEXTURE2D_DESC* pDesc,
 	const D3D11_SUBRESOURCE_DATA* pInitialData,
 	ID3D11Texture2D** ppTexture2D)
 {
