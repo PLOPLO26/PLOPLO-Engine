@@ -431,6 +431,7 @@
     <ClCompile Include="imgui-docking\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="PLOPLO-Engine.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
+    <ClCompile Include="src\CCamera.cpp" />
     <ClCompile Include="src\DepthStencilView.cpp" />
     <ClCompile Include="src\Device.cpp" />
     <ClCompile Include="src\DeviceContext.cpp" />
@@ -442,6 +443,7 @@
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\SwapChain.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
     <ClCompile Include="src\UserInterface.cpp" />
     <ClCompile Include="src\Viewport.cpp" />
     <ClCompile Include="src\Window.cpp" />
@@ -467,6 +469,8 @@
     <ClInclude Include="imgui-docking\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="imgui-docking\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="include\Buffer.h" />
+    <ClInclude Include="include\CCamera.h" />
+    <ClInclude Include="include\Commons.h" />
     <ClInclude Include="include\DepthStencilView.h" />
     <ClInclude Include="include\Device.h" />
     <ClInclude Include="include\DeviceContext.h" />
@@ -481,6 +485,7 @@
     <ClInclude Include="include\ShaderProgram.h" />
     <ClInclude Include="include\SwapChain.h" />
     <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\Transform.h" />
     <ClInclude Include="include\UserInterface.h" />
     <ClInclude Include="include\Viewport.h" />
     <ClInclude Include="include\Window.h" />

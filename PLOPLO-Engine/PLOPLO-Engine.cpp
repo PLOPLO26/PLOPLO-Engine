@@ -21,6 +21,8 @@
 #include "SamplerState.h"
 #include "ModelLoader.h"
 #include "UserInterface.h"
+#include "Transform.h"
+
 
 
 
@@ -61,24 +63,32 @@ Texture                             g_albedo;
 Texture                             g_normal;
 SamplerState                        g_sampler;
 UserInterface                       UI;
+Transform                           g_transform;
+
 
 XMMATRIX                            g_World;
 XMMATRIX                            g_View;
 XMMATRIX                            g_Projection;
-XMFLOAT4                            g_vMeshColor( 0.7f, 0.7f, 0.7f, 1.0f );
+XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f);
 Mesh                                g_mesh;
 ModelLoader                         g_loader;
 Camera                              g_cameraData;
 LightConfig                         g_lightConfig;
 float                               g_LightMovementSpeed = 1.0f;
 XMFLOAT4                            g_LightPosition = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+// Render Model in ImGui
+ID3D11Texture2D* imguiTexture;
+ID3D11RenderTargetView* imguiRTV;
+ID3D11ShaderResourceView* imguiSRV = nullptr;
+
+
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
 
 HRESULT InitDevice();
 void CleanupDevice();
-LRESULT CALLBACK    WndProc( HWND, UINT, WPARAM, LPARAM );
+LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 void update();
 void Render();
 
@@ -87,28 +97,28 @@ void Render();
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
 //--------------------------------------------------------------------------------------
-int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow )
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-    UNREFERENCED_PARAMETER( hPrevInstance );
-    UNREFERENCED_PARAMETER( lpCmdLine );
+    UNREFERENCED_PARAMETER(hPrevInstance);
+    UNREFERENCED_PARAMETER(lpCmdLine);
 
-    if( FAILED( g_window.init( hInstance, nCmdShow, WndProc) ) )
+    if (FAILED(g_window.init(hInstance, nCmdShow, WndProc)))
         return 0;
 
-    if( FAILED( InitDevice() ) )
+    if (FAILED(InitDevice()))
     {
         CleanupDevice();
         return 0;
     }
 
     // Main message loop
-    MSG msg = {0};
-    while( WM_QUIT != msg.message )
+    MSG msg = { 0 };
+    while (WM_QUIT != msg.message)
     {
-        if( PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE ) )
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            TranslateMessage( &msg );
-            DispatchMessage( &msg );
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
         else
         {
@@ -119,7 +129,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 
     CleanupDevice();
 
-    return ( int )msg.wParam;
+    return (int)msg.wParam;
 }
 
 
@@ -140,28 +150,28 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
 HRESULT InitDevice()
 {
     HRESULT hr = S_OK;
-    
+
 
     g_swapchain.init(g_device, g_deviceContext, g_backBuffer, g_window);
-    
+
 
     // Create depth stencil texture
-    g_renderTargetView.init(g_device, 
-                            g_backBuffer, 
-                            DXGI_FORMAT_R8G8B8A8_UNORM);
+    g_renderTargetView.init(g_device,
+        g_backBuffer,
+        DXGI_FORMAT_R8G8B8A8_UNORM);
 
 
     //Create depth Stencil Texture
     g_depthStencil.init(g_device,
-                        g_window.m_width,
-                        g_window.m_height,
-                        DXGI_FORMAT_D24_UNORM_S8_UINT,
-                        D3D11_BIND_DEPTH_STENCIL);
+        g_window.m_width,
+        g_window.m_height,
+        DXGI_FORMAT_D24_UNORM_S8_UINT,
+        D3D11_BIND_DEPTH_STENCIL);
 
     // Create the depth stencil view
-    g_depthStencilView.init(g_device, 
-                            g_depthStencil.m_texture, 
-                            DXGI_FORMAT_D24_UNORM_S8_UINT);
+    g_depthStencilView.init(g_device,
+        g_depthStencil.m_texture,
+        DXGI_FORMAT_D24_UNORM_S8_UINT);
 
     // Setup the viewport
     g_viewport.init(g_window);
@@ -202,14 +212,14 @@ HRESULT InitDevice()
 
     //Init Shader
     g_shaderProgram.init(g_device, "ShaderV2.fx", Layout);
-    
+
 
     //Generar Mesh
     g_mesh = g_loader.Load("Pistol.obj");
-  
+
     //Create Vertex buffer
     g_vertexBuffer.init(g_device, g_mesh, D3D11_BIND_VERTEX_BUFFER);
-  
+
     // Create index buffer
     g_indexBuffer.init(g_device, g_mesh, D3D11_BIND_INDEX_BUFFER);
 
@@ -220,21 +230,45 @@ HRESULT InitDevice()
     g_lightBuffer.init(g_device, sizeof(LightConfig));
 
     // Load the Texture
-    
+
     g_albedo.init(g_device, "GunAlbedo.dds");
     g_normal.init(g_device, "normal.dds");
 
     // Create the sample state
     g_sampler.init(g_device);
 
+    D3D11_TEXTURE2D_DESC textureDesc;
+    ZeroMemory(&textureDesc, sizeof(textureDesc));
+    textureDesc.Width = g_window.m_width;
+    textureDesc.Height = g_window.m_height;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 1;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.Usage = D3D11_USAGE_DEFAULT;
+    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    g_device.m_device->CreateTexture2D(&textureDesc, NULL, &imguiTexture);
+
+    // Crear una vista de render target para la textura de IMGUI
+    g_device.m_device->CreateRenderTargetView(imguiTexture, NULL, &imguiRTV);
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    ZeroMemory(&srvDesc, sizeof(srvDesc));
+    srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+    g_device.m_device->CreateShaderResourceView(imguiTexture, &srvDesc, &imguiSRV);
+
+
     // Initialize the world matrices
     g_World = XMMatrixIdentity();
 
     // Initialize the view matrix
-    XMVECTOR Eye = XMVectorSet( 0.0f, 3.0f, -6.0f, -30.0f );
-    XMVECTOR At = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
-    XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
-    g_View = XMMatrixLookAtLH( Eye, At, Up );
+    XMVECTOR Eye = XMVectorSet(0.0f, 3.0f, -6.0f, -30.0f);
+    XMVECTOR At = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    g_View = XMMatrixLookAtLH(Eye, At, Up);
 
     g_cameraData.mView = XMMatrixTranspose(g_View);
     // Initialize the projection matrix
@@ -295,26 +329,26 @@ void CleanupDevice()
 //--------------------------------------------------------------------------------------
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
         return true;
     PAINTSTRUCT ps;
     HDC hdc;
 
-    switch( message )
+    switch (message)
     {
-        case WM_PAINT:
-            hdc = BeginPaint( hWnd, &ps );
-            EndPaint( hWnd, &ps );
-            break;
+    case WM_PAINT:
+        hdc = BeginPaint(hWnd, &ps);
+        EndPaint(hWnd, &ps);
+        break;
 
-        case WM_DESTROY:
-            PostQuitMessage( 0 );
-            break;
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        break;
 
-        default:
-            return DefWindowProc( hWnd, message, wParam, lParam );
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
     }
 
     return 0;
@@ -328,10 +362,85 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 void update()
 {
     //Ui update
-    
+
     UI.update();
-    bool showDemoWindow = true;
-    ImGui::ShowDemoWindow(&showDemoWindow);
+    //ImGui Demo
+    bool show_demo_window = true;
+    ImGui::ShowDemoWindow(&show_demo_window);
+
+
+    // EASY TRANSFORM
+    ImGui::Begin(" TRANSFORM");
+
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("POSITION");
+    ImGui::PopStyleColor();
+    ImGui::SliderFloat("Position X", &g_transform.m_v3Position.x, -4.0f, 1.0f);
+    ImGui::SliderFloat("Position Y", &g_transform.m_v3Position.y, -2.0f, 2.0f);
+    ImGui::SliderFloat("Position Z", &g_transform.m_v3Position.z, -2.0f, 2.0f);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("ROTATION");
+    ImGui::PopStyleColor();
+    ImGui::SliderFloat("Rotation X", &g_transform.m_v3Rotate.x, -6.0f, 6.0f);
+    ImGui::SliderFloat("Rotation Y", &g_transform.m_v3Rotate.y, -6.0f, 6.0f);
+    ImGui::SliderFloat("Rotation Z", &g_transform.m_v3Rotate.z, -6.0f, 6.0f);
+
+    ImGui::End();
+
+    // EASY SCALE
+    ImGui::Begin(" SCALE");
+
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("SCALE");
+    ImGui::PopStyleColor();
+    ImGui::SliderFloat("Rotation X", &g_transform.m_v3Scale.x, 0.4f, 1.0f);
+    ImGui::SliderFloat("Rotation Y", &g_transform.m_v3Scale.y, 0.4f, 1.0f);
+    ImGui::SliderFloat("Rotation Z", &g_transform.m_v3Scale.z, 0.4f, 1.0f);
+
+    ImGui::End();
+
+    // DATA TRANSFORM
+    ImGui::Begin("DATA TRANSFORM");
+
+    UI.vec3Control("Position", &g_transform.m_v3Position.x);
+    UI.vec3Control("Rotation", &g_transform.m_v3Rotate.x);
+    UI.vec3Control("Scale", &g_transform.m_v3Scale.x, 0.5f);
+
+    ImGui::End();
+
+    // COLOR BACKGROUND
+    ImGui::Begin("COLOR BACKGROUND");
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("Color widget with Float Display:");
+    ImGui::PopStyleColor();
+    ImGui::ColorEdit4("MyColor##2f", (float*)&g_renderTargetView.m_cleanColor, ImGuiColorEditFlags_Float);
+    ImGui::End();
+
+    // COLOR MODEL TEXTURE
+    ImGui::Begin("COLOR MODEL TEXTURE");
+
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+    ImGui::Text("White is better:");
+    ImGui::PopStyleColor();
+    ImGui::ColorEdit4("MyColor##2f", (float*)&g_vMeshColor, ImGuiColorEditFlags_Float);
+
+    ImGui::End();
+
+    g_transform.m_fRotateNum += 0.0002f;
+
+    g_World = XMMatrixScaling(g_transform.m_v3Scale.x,
+        g_transform.m_v3Scale.y,
+        g_transform.m_v3Scale.z) *
+
+        XMMatrixRotationX(g_transform.m_v3Rotate.x) *
+        XMMatrixRotationY(g_transform.m_v3Rotate.y) *
+        XMMatrixRotationZ(g_transform.m_v3Rotate.z) *
+
+        XMMatrixTranslation(g_transform.m_v3Position.x,
+            g_transform.m_v3Position.y,
+            g_transform.m_v3Position.z);
+
 
     // Update our time
     static float t = 0.0f;

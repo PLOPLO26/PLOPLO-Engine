@@ -97,6 +97,15 @@
     <ClInclude Include="include\UserInterface.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Transform.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Commons.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CCamera.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
@@ -151,6 +160,12 @@
     </ClCompile>
     <ClCompile Include="imgui-docking\imgui-docking\backends\imgui_impl_win32.cpp">
       <Filter>Imgui\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Transform.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CCamera.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
