@@ -6,14 +6,14 @@ class DeviceContext;
 /* brief: Esta clase textura esta encargasa de almacenar proporcionar, recursos
  de texturas (textels)*/
 
-/*Un recurso textura es una coleccion de datos dise;ada para almacenar texels
+ /*Un recurso textura es una coleccion de datos dise;ada para almacenar texels
 
- TIPOS DE TEXTURAS
-  D3D11_TEXTURE2D_DESC
-  Es la estrutura donde se guardan */
+  TIPOS DE TEXTURAS
+   D3D11_TEXTURE2D_DESC
+   Es la estrutura donde se guardan */
 
 class
-Texture {
+	Texture {
 public:
 	Texture() = default;
 	~Texture();
@@ -26,9 +26,9 @@ public:
 	// <param name="tectureName'>: Almacenamos el nombre de la textura , para cargarla desde memoria </param>
 	// Cargar ek archivo de textura 
 	void
-	init(Device device, std::string textureName);
+		init(Device device, std::string textureName);
 
-	
+
 	//<summry?
 	// brief: Esta funcion esta encargada de crear una Textura2D a partir de datos proporcionados
 	// por el desarrollador.
@@ -41,12 +41,12 @@ public:
 	// <param name = BindFlags> Es una caracteristica para clasificar el tipo de textura
 	// que se esta creando. </param>
 	//La funcion inicia la textura con parámetros como ancho, alto, formato y banderas de enlace
-	void 
-	init(Device device,
-		unsigned int width,
-		unsigned int height,
-		DXGI_FORMAT Format,
-		unsigned int BindFlags);
+	void
+		init(Device device,
+			unsigned int width,
+			unsigned int height,
+			DXGI_FORMAT Format,
+			unsigned int BindFlags);
 
 	//Cambios dinamicos en la textura 
 	void
@@ -59,9 +59,9 @@ public:
 	// <param name = StartSlot> Esta encargado de asignar el punto de inicio en memoria. 
 	//Renderiza la textura
 	void
-		render(DeviceContext & deviceContext, unsigned int StartSlot, unsigned int NumViews);
+		render(DeviceContext& deviceContext, unsigned int StartSlot, unsigned int NumViews);
 
-	
+
 	//This method is in change of releasing the resources stored in the class's memory
 	//Destruye la textura, liberando los recursos asociados
 	void

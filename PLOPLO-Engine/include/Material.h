@@ -7,7 +7,7 @@ class Devide;
 class DeviceContext;
 
 struct
-MaterialBuffer {
+	MaterialBuffer {
 	Texture albedo;
 	Texture normal;
 	Texture metallic;
@@ -34,17 +34,17 @@ public:
 	~Material() = default;
 
 	void
-	init(Device device,
-		 DeviceContext* deviceContext,
-		 std::unordered_map<TextureType, std::string> textureNames);
+		init(Device device,
+			DeviceContext* deviceContext,
+			std::unordered_map<TextureType, std::string> textureNames);
 
-	void 
-	update();
+	void
+		update();
 
-	void 
-	render(DeviceContext& deviceContext);
+	void
+		render(DeviceContext& deviceContext);
 
-	void 
+	void
 		destroy();
 private:
 	MaterialBuffer m_materialBuffer;

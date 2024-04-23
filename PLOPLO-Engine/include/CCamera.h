@@ -15,7 +15,7 @@ public:
     CCamera() = default;
     ~CCamera() {};
 
-    
+
     void
         init(Device device);
 
@@ -23,10 +23,10 @@ public:
     void
         update(DeviceContext& deviceContext, Camera cam);
 
-    
+
     void
         render(DeviceContext& deviceContext);
-  void
+    void
         destroy();
 
 public:

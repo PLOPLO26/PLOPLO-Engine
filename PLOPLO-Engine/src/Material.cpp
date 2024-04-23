@@ -3,9 +3,9 @@
 #include "DeviceContext.h"
 #include "Texture.h"
 
-void Material::init(Device device, 
-	                DeviceContext* deviceContext, 
-	                std::unordered_map<TextureType, std::string> textureNames)
+void Material::init(Device device,
+	DeviceContext* deviceContext,
+	std::unordered_map<TextureType, std::string> textureNames)
 {
 	//Inicializamos las texturas
 	for (auto it = textureNames.begin(); it != textureNames.end(); ++it)
@@ -38,9 +38,9 @@ void Material::render(DeviceContext& deviceContext)
 	m_constantBuffer->render(deviceContext, 0, 1);
 
 	//Enlazar las texturas
-	m_materialBuffer.albedo.render(deviceContext,    0, 1);
-	m_materialBuffer.normal.render(deviceContext,    1, 1);
-	m_materialBuffer.metallic.render(deviceContext,  2, 1);
+	m_materialBuffer.albedo.render(deviceContext, 0, 1);
+	m_materialBuffer.normal.render(deviceContext, 1, 1);
+	m_materialBuffer.metallic.render(deviceContext, 2, 1);
 	m_materialBuffer.roughness.render(deviceContext, 3, 1);
 
 

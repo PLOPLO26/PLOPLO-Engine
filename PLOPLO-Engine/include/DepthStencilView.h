@@ -22,7 +22,7 @@ public:
 	void
 		destroy();
 
-public: 
+public:
 	ID3D11DepthStencilView* m_depthStencilView = nullptr;
 
 };

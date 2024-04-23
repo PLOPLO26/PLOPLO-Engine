@@ -38,27 +38,27 @@ HRESULT Window::init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc)
         return E_FAIL;
 
     // Create window
- 
+
     RECT rc = { 0, 0, 1920, 1080 };
     m_rect = rc;
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-    m_hWnd = CreateWindow("TutorialWindowClass", 
-             "PLOPLO-Engine", 
-             WS_OVERLAPPEDWINDOW,
-             CW_USEDEFAULT, 
-             CW_USEDEFAULT, 
+    m_hWnd = CreateWindow("TutorialWindowClass",
+        "PLOPLO-Engine",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
         m_rect.right - m_rect.left,
         m_rect.bottom - m_rect.top,
-             nullptr, 
-             nullptr, 
-             m_hInst,
-             nullptr);
+        nullptr,
+        nullptr,
+        m_hInst,
+        nullptr);
     if (!m_hWnd)
         return E_FAIL;
 
     ShowWindow(m_hWnd, nCmdShow);
 
-    
+
     GetClientRect(m_hWnd, &m_rect);
     m_width = m_rect.right - m_rect.left;
     m_height = m_rect.bottom - m_rect.top;
@@ -77,4 +77,3 @@ void Window::render()
 void Window::destroy()
 {
 }
-

@@ -103,9 +103,6 @@
     <ClInclude Include="include\Commons.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="include\CCamera.h">
-      <Filter>Include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PLOPLO-Engine.cpp" />
@@ -162,9 +159,6 @@
       <Filter>Imgui\src</Filter>
     </ClCompile>
     <ClCompile Include="src\Transform.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CCamera.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

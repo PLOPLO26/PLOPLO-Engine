@@ -9,32 +9,32 @@ class Texture;
 // Swap chain es una coleccion de buffers 
 
 class
-SwapChain {
+	SwapChain {
 public:
 	SwapChain() = default;
 	~SwapChain() { SAFE_RELEASE(m_swapChain) };
 
 	void init(Device& device,
-		      DeviceContext& deviceContext,
-		      Texture& backBuffer,
-		      Window window); //Inicializa el Objeto
+		DeviceContext& deviceContext,
+		Texture& backBuffer,
+		Window window); //Inicializa el Objeto
 
 	void
-	update();
+		update();
 
 	void
-	render();
+		render();
 
 	void
-	destroy();
+		destroy();
 
-	void 
-	present();
+	void
+		present();
 
 public:
 	IDXGISwapChain* m_swapChain = nullptr; // Puntero al objeto
 	D3D_DRIVER_TYPE m_driverType = D3D_DRIVER_TYPE_NULL; // Tipo de controlador de DirectX
 private:
-	
+
 	D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0; //Nivel de características de DirectX
 };

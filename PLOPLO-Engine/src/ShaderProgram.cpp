@@ -93,9 +93,9 @@ void ShaderProgram::CreateVertexShader(Device device)
 	}
 	//Create the vertex shader
 	hr = device.CreateVertexShader(m_vertexShaderData->GetBufferPointer(),
-		                           m_vertexShaderData->GetBufferSize(),
-		                           nullptr,
-		                           &m_VertexShader);
+		m_vertexShaderData->GetBufferSize(),
+		nullptr,
+		&m_VertexShader);
 	if (FAILED(hr))
 	{
 		m_vertexShaderData->Release();

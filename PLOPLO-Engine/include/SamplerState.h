@@ -18,7 +18,7 @@ public:
 		update();
 
 	void
-		render(DeviceContext& deviceContext, 
+		render(DeviceContext& deviceContext,
 			unsigned int StartSlot,
 			unsigned int NumSamplers);
 

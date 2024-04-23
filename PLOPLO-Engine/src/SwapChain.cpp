@@ -4,23 +4,23 @@
 #include "Window.h"
 #include "Texture.h"
 
-void 
-SwapChain::init(Device& device, 
-	            DeviceContext& deviceContext, 
-	            Texture& backBuffer, 
-	            Window window)
+void
+SwapChain::init(Device& device,
+    DeviceContext& deviceContext,
+    Texture& backBuffer,
+    Window window)
 {
-	//Check if window resource exist
-	if (window.m_hWnd == nullptr)
-	{
-		WARNING("ERROR: SnapChain::init : Error in data from params [CHECK FOR Window window ] \n");
-		exit(1);
-	}
-	unsigned int createDeviceFlags = 0;
+    //Check if window resource exist
+    if (window.m_hWnd == nullptr)
+    {
+        WARNING("ERROR: SnapChain::init : Error in data from params [CHECK FOR Window window ] \n");
+        exit(1);
+    }
+    unsigned int createDeviceFlags = 0;
 #ifdef _DEBUG
     createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-    
+
     D3D_DRIVER_TYPE driverTypes[] =
     {
         D3D_DRIVER_TYPE_HARDWARE,
@@ -38,7 +38,7 @@ SwapChain::init(Device& device,
     unsigned int numFeatureLevels = ARRAYSIZE(featureLevels);
 
     DXGI_SWAP_CHAIN_DESC sd;
-    memset (&sd, 0, sizeof(sd));
+    memset(&sd, 0, sizeof(sd));
     sd.BufferCount = 1;
     sd.BufferDesc.Width = window.m_width;
     sd.BufferDesc.Height = window.m_height;
@@ -67,7 +67,7 @@ SwapChain::init(Device& device,
         exit(1);
     }
     hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer.m_texture);
-    if (FAILED (hr))
+    if (FAILED(hr))
     {
         WARNING("ERROR: SwapChain::init : Error in data from method [CHECK FOR m_swapChain->GetBuffer()] \n");
         exit(1);
@@ -91,4 +91,3 @@ void SwapChain::present()
 {
     m_swapChain->Present(0, 0);
 }
-

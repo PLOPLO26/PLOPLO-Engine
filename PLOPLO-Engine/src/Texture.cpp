@@ -33,35 +33,35 @@ void Texture::init(Device device, std::string textureName)
 	HRESULT hr = S_OK;
 
 	hr = D3DX11CreateShaderResourceViewFromFile(device.m_device,
-		                                        textureName.c_str(),
-		                                        nullptr, 
-		                                        nullptr, 
-		                                        &m_textureFromImg,
-		                                        nullptr);
+		textureName.c_str(),
+		nullptr,
+		nullptr,
+		&m_textureFromImg,
+		nullptr);
 
 	if (FAILED(hr)) {
 		WARNING("ERROR: Texture::init : Error in data from params [CHECK FOR string textureName -> Verify correct Texture name in Filepath] \n ");
 		exit(1);
 	}
-	
+
 
 }
 
 //Inicializa la textura con parametros especificos como ancho, alto, formato, etc. 
 //Se crea una textura 2D
 //Maneja los errores
-void Texture::init(Device device, 
-	               unsigned int width, 
-	               unsigned int height, 
-	               DXGI_FORMAT Format, 
-	               unsigned int BindFlags)
+void Texture::init(Device device,
+	unsigned int width,
+	unsigned int height,
+	DXGI_FORMAT Format,
+	unsigned int BindFlags)
 {
 	if (device.m_device == nullptr)
 	{
 		WARNING("ERROR: Texture::init : Error in data from params [CHECK FOR Device device] \n");
 		exit(1);
 	}
-	else if (width <= 0 || height <= 0) 
+	else if (width <= 0 || height <= 0)
 	{
 		WARNING("ERROR: Texture::init : Error in data from params {CHECK FOR unsigned int width OR unsigned int height] \n");
 		exit(1);

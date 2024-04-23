@@ -196,4 +196,3 @@ UserInterface::embraceTheDarkness() {
     style.LogSliderDeadzone = 4;
     style.TabRounding = 4;
 }
-
